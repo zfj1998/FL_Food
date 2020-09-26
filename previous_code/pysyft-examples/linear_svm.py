@@ -2,6 +2,13 @@ import torch
 import torch.nn as nn
 import random
 import math
+import numpy as np
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.preprocessing import StandardScaler
+from collections import Counter
+from sklearn.svm import SVC
 
 def hinge_loss(scores, targets):
     '''
@@ -84,14 +91,28 @@ class LinearSVM():
 
 
 if __name__ == '__main__':
-    from sklearn.datasets import make_classification
-    
-    X, y = make_classification(n_samples=2000, n_features=4, random_state=0)
-    X_train, X_test = torch.from_numpy(X[:1500]).float(), torch.from_numpy(X[1500:]).float()
-    y_train, y_test = torch.from_numpy(y[:1500]).long(), torch.from_numpy(y[1500:]).long()
-    print(y[:20])
-    print(X.shape, y.shape)
+    epi_datas = pd.read_csv('./epi_r_filtered_5.csv')
+    epi_datas = epi_datas.values
+    x = epi_datas[:,1:]
+    y = epi_datas[:,0]
+    y[y==0.0]=0
+    y[y==1.25]=0
+    y[y==1.875]=0
+    y[y==2.5]=0
+    y[y==3.125]=0
+    y[y==3.75]=0
+    y[y==4.375]=1
+    y[y==5.0]=1
+    standar_data = StandardScaler()
+    standar_data.fit(x)
+    standar_datax = standar_data.transform(x)
+    x_train,x_test,y_train,y_test = train_test_split(standar_datax,y,test_size=0.3)
+    x_train = torch.from_numpy(x_train).type(torch.FloatTensor)
+    x_test = torch.from_numpy(x_test).type(torch.FloatTensor)
+    y_train = torch.from_numpy(y_train).type(torch.LongTensor)
+    y_test = torch.from_numpy(y_test).type(torch.LongTensor)
+
     model = LinearSVM(verbose=True)
-    model.fit(X_train, y_train)
+    model.fit(x_train, y_train)
     print(model.score(X_test, y_test))
     
