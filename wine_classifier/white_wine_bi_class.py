@@ -171,3 +171,27 @@ for e in range(1, EPOCHS+1):
 
         y_pred_list = [a.squeeze().tolist() for a in y_pred_list]
         print(classification_report(y_test, y_pred_list))
+
+
+        
+# Epoch 4600: | Loss: 0.14415 | Acc: 95.462  without batchnorm
+#               precision    recall  f1-score   support
+
+#            0       0.69      0.64      0.66       574
+#            1       0.81      0.84      0.82      1043
+
+#     accuracy                           0.77      1617
+#    macro avg       0.75      0.74      0.74      1617
+# weighted avg       0.77      0.77      0.77      1617
+
+# Epoch 1800: | Loss: 0.08813 | Acc: 96.538 with batchmorm
+#               precision    recall  f1-score   support
+
+#            0       0.74      0.69      0.72       574
+#            1       0.84      0.87      0.85      1043
+
+#     accuracy                           0.81      1617
+#    macro avg       0.79      0.78      0.78      1617
+# weighted avg       0.80      0.81      0.80      1617
+
+

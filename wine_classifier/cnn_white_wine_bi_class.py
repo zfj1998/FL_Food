@@ -80,16 +80,33 @@ class CNN(nn.Module):
     def __init__(self):
         super(CNN, self).__init__()
 
-        self.conv1 = nn.Conv1d(in_channels = 1,out_channels = 8,kernel_size = 2)
-        self.test_conv2 = nn.Conv1d(8, 16, 2)
-        self.test_conv3 = nn.Conv1d(16, 16, 1)
-        
-        self.fc1 = nn.Linear(16, 2)
+        self.conv1 = nn.Conv1d(in_channels = 1,out_channels = 16,kernel_size = 2)
+        self.test_conv2 = nn.Conv1d(16, 32, 2)
+        self.test_conv3 = nn.Conv1d(32, 64, 1)
+        self.batch1 = nn.BatchNorm1d(16*10)
+        self.batch2 = nn.BatchNorm1d(32*4)
+        self.batch3 = nn.BatchNorm1d(64*2)
+        self.fc1 = nn.Linear(64, 2)
 
     def forward(self, encoder_outputs):
-        cnn_out = F.max_pool1d(F.relu(self.conv1(encoder_outputs)), 2) 
-        cnn_out = F.max_pool1d(F.relu(self.test_conv2(cnn_out)), 2)    
-        cnn_out = F.max_pool1d(F.relu(self.test_conv3(cnn_out)), 2)
+        cnn_out = self.conv1(encoder_outputs)
+        cnn_out = cnn_out.reshape(len(cnn_out), 16*10)
+        cnn_out = self.batch1(cnn_out)
+        cnn_out = cnn_out.reshape(len(cnn_out), 16, 10)
+        cnn_out = F.max_pool1d(F.relu(cnn_out), 2)
+
+        cnn_out = self.test_conv2(cnn_out)
+        cnn_out = cnn_out.reshape(len(cnn_out), 32*4)
+        cnn_out = self.batch2(cnn_out)
+        cnn_out = cnn_out.reshape(len(cnn_out), 32, 4)
+        cnn_out = F.max_pool1d(F.relu(cnn_out), 2)
+
+        cnn_out = self.test_conv3(cnn_out)
+        cnn_out = cnn_out.reshape(len(cnn_out), 64*2)
+        cnn_out = self.batch3(cnn_out)
+        cnn_out = cnn_out.reshape(len(cnn_out), 64, 2)
+        cnn_out = F.max_pool1d(F.relu(cnn_out), 2)
+
         cnn_out = cnn_out.squeeze()
         output = self.fc1(cnn_out)
         return output
