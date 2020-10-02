@@ -86,9 +86,7 @@ class CNN(nn.Module):
         self.batch1 = nn.BatchNorm1d(16*10)
         self.batch2 = nn.BatchNorm1d(32*4)
         self.batch3 = nn.BatchNorm1d(64*2)
-        self.fc1 = nn.Linear(64, 64)
-        self.fc2 = nn.Linear(64, 2)
-        self.dropout = nn.Dropout(p=0.1)
+        self.fc = nn.Linear(64, 2)
 
     def forward(self, encoder_outputs):
         cnn_out = self.conv1(encoder_outputs)
@@ -110,10 +108,7 @@ class CNN(nn.Module):
         cnn_out = F.max_pool1d(F.relu(cnn_out), 2)
         cnn_out = cnn_out.squeeze()
 
-        fc1_out = self.fc1(cnn_out)
-        fc1_out = self.dropout(fc1_out)
-
-        output = self.fc2(fc1_out)
+        output = self.fc(cnn_out)
         return output
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
