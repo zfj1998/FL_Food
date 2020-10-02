@@ -95,12 +95,14 @@ class CNN(nn.Module):
         cnn_out = self.batch1(cnn_out)
         cnn_out = cnn_out.reshape(len(cnn_out), 16, 10)
         cnn_out = F.max_pool1d(F.relu(cnn_out), 2)
+        cnn_out = self.dropout(cnn_out)
 
         cnn_out = self.test_conv2(cnn_out)
         cnn_out = cnn_out.reshape(len(cnn_out), 32*4)
         cnn_out = self.batch2(cnn_out)
         cnn_out = cnn_out.reshape(len(cnn_out), 32, 4)
         cnn_out = F.max_pool1d(F.relu(cnn_out), 2)
+        cnn_out = self.dropout(cnn_out)
 
         cnn_out = self.test_conv3(cnn_out)
         cnn_out = cnn_out.reshape(len(cnn_out), 64*2)
@@ -170,3 +172,7 @@ for e in range(1, EPOCHS+1):
 # Epoch 5000: | Loss: 0.04482 | Acc: 98.692
 # Test Acc: 78.714
 
+# with batchnorm and 1 dropout
+# Epoch 3550: | Loss: 0.13402 | Acc: 95.000
+# Epoch 3600: | Loss: 0.14369 | Acc: 94.462
+# Test Acc: 78.571
