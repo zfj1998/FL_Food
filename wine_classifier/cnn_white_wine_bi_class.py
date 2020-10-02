@@ -52,7 +52,7 @@ def shaping_input(*datas):
 
 X_train, X_test = shaping_input(X_train, X_test)
 
-EPOCHS = 1000
+EPOCHS = 5000
 BATCH_SIZE = 256
 LEARNING_RATE = 1e-4
 
