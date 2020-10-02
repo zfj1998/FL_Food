@@ -133,7 +133,7 @@ for e in range(1, EPOCHS+1):
         epoch_acc = 0
         with torch.no_grad():
             for X_batch, y_batch in test_loader:
-                X_batch = X_batch.to(device)
+                X_batch, y_batch = X_batch.to(device), y_batch.to(device)
                 y_test_pred = model(X_batch)
                 acc = binary_acc(y_test_pred, y_batch)
                 epoch_acc += acc.item()
