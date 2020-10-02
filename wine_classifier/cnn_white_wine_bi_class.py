@@ -87,6 +87,7 @@ class CNN(nn.Module):
         self.batch2 = nn.BatchNorm1d(32*4)
         self.batch3 = nn.BatchNorm1d(64*2)
         self.fc1 = nn.Linear(64, 2)
+        self.dropout = nn.Dropout(p=0.1)
 
     def forward(self, encoder_outputs):
         cnn_out = self.conv1(encoder_outputs)
@@ -106,6 +107,7 @@ class CNN(nn.Module):
         cnn_out = self.batch3(cnn_out)
         cnn_out = cnn_out.reshape(len(cnn_out), 64, 2)
         cnn_out = F.max_pool1d(F.relu(cnn_out), 2)
+        cnn_out = self.dropout(cnn_out)
 
         cnn_out = cnn_out.squeeze()
         output = self.fc1(cnn_out)
@@ -156,5 +158,15 @@ for e in range(1, EPOCHS+1):
                 epoch_acc += acc.item()
         print(f'Test Acc: {epoch_acc/len(test_loader):.3f}')
 
+# without batchnorm
 # Epoch 1000: | Loss: 0.48713 | Acc: 76.923
 # Test Acc: 74.143
+
+#with batchnorm
+# Epoch 0550: | Loss: 0.26266 | Acc: 89.308
+# Epoch 0600: | Loss: 0.25085 | Acc: 89.692
+# Test Acc: 79.000
+# Epoch 4950: | Loss: 0.04238 | Acc: 99.077
+# Epoch 5000: | Loss: 0.04482 | Acc: 98.692
+# Test Acc: 78.714
+
